@@ -19,6 +19,13 @@ class OutfitSuggestionScreen extends ConsumerStatefulWidget {
 class _OutfitSuggestionScreenState extends ConsumerState<OutfitSuggestionScreen> {
   int _seed = 0;
 
+  static final _demoItems = [
+    ClothingItem(id: 'demo-top', name: 'پیراهن سفید', category: 'پیراهن', color: 'سفید', season: 'همه فصل‌ها'),
+    ClothingItem(id: 'demo-bottom', name: 'شلوار جین', category: 'شلوار', color: 'آبی', season: 'همه فصل‌ها'),
+    ClothingItem(id: 'demo-shoes', name: 'کفش مشکی', category: 'کفش', color: 'مشکی', season: 'همه فصل‌ها'),
+    ClothingItem(id: 'demo-outer', name: 'کت کرم', category: 'کت', color: 'کرم', season: 'پاییز'),
+  ];
+
   ClothingItem? _pickFrom(List<ClothingItem> items, List<String> categories) {
     final matches = items.where((item) => categories.contains(item.category)).toList();
     if (matches.isEmpty) return null;
@@ -63,11 +70,12 @@ class _OutfitSuggestionScreenState extends ConsumerState<OutfitSuggestionScreen>
   @override
   Widget build(BuildContext context) {
     final items = ref.watch(closetProvider);
+    final sourceItems = items.isEmpty ? _demoItems : items;
     final primary = Theme.of(context).colorScheme.primary;
-    final top = _pickFrom(items, _topCategories);
-    final bottom = _pickFrom(items, _bottomCategories);
-    final shoes = _pickFrom(items, _shoeCategories);
-    final outer = _pickFrom(items, _outerCategories);
+    final top = _pickFrom(sourceItems, _topCategories);
+    final bottom = _pickFrom(sourceItems, _bottomCategories);
+    final shoes = _pickFrom(sourceItems, _shoeCategories);
+    final outer = _pickFrom(sourceItems, _outerCategories);
 
     return Scaffold(
       appBar: AppBar(title: const Text('استایل‌سازی')),
@@ -95,7 +103,7 @@ class _OutfitSuggestionScreenState extends ConsumerState<OutfitSuggestionScreen>
           Row(
             children: [
               const Expanded(child: Text('ترکیب کژوال شهری', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800))),
-              Text('${items.length} لباس در کمد', style: const TextStyle(fontSize: 12, color: Colors.black54)),
+              Text('${sourceItems.length} لباس در کمد', style: const TextStyle(fontSize: 12, color: Colors.black54)),
             ],
           ),
           const SizedBox(height: 14),
