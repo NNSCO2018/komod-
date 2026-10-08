@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import '../../core/api_service.dart';
 
 class OtpScreen extends StatefulWidget {
   final String phone;
@@ -30,15 +29,16 @@ class _OtpScreenState extends State<OtpScreen> {
       _error = null;
     });
 
-    try {
-      await ApiService().verifyOtp(widget.phone, code);
-      if (mounted) context.go('/welcome');
-    } catch (e) {
+    await Future<void>.delayed(const Duration(milliseconds: 400));
+    if (!mounted) return;
+
+    if (code == '123456' || code == '۱۲۳۴۵۶') {
+      context.go('/welcome');
+    } else {
       setState(() {
-        _error = 'کد اشتباه یا منقضی شده. دوباره امتحان کن.';
+        _loading = false;
+        _error = 'کد نمایشی صحیح نیست. کد ۱۲۳۴۵۶ را وارد کن.';
       });
-    } finally {
-      if (mounted) setState(() => _loading = false);
     }
   }
 
@@ -83,7 +83,7 @@ class _OtpScreenState extends State<OtpScreen> {
                 textAlign: TextAlign.center,
                 style: const TextStyle(fontSize: 22, letterSpacing: 8),
                 decoration: const InputDecoration(
-                  hintText: '- - - - -',
+                  hintText: '۱۲۳۴۵۶',
                 ),
               ),
               if (_error != null) ...[

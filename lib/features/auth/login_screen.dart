@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import '../../core/api_service.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -29,15 +28,10 @@ class _LoginScreenState extends State<LoginScreen> {
       _error = null;
     });
 
-    try {
-      await ApiService().requestOtp(phone);
-      if (mounted) context.push('/otp', extra: phone);
-    } catch (e) {
-      setState(() {
-        _error = 'خطا در ارسال کد. دوباره امتحان کن.';
-      });
-    } finally {
-      if (mounted) setState(() => _loading = false);
+    await Future<void>.delayed(const Duration(milliseconds: 400));
+    if (mounted) {
+      setState(() => _loading = false);
+      context.push('/otp', extra: phone);
     }
   }
 
