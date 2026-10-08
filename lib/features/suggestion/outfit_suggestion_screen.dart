@@ -20,59 +20,103 @@ class _OutfitSuggestionScreenState extends ConsumerState<OutfitSuggestionScreen>
   int _seed = 0;
 
   ClothingItem? _pickFrom(List<ClothingItem> items, List<String> categories) {
-    final matches = items.where((i) => categories.contains(i.category)).toList();
+    final matches = items.where((item) => categories.contains(item.category)).toList();
     if (matches.isEmpty) return null;
-    final rnd = Random(_seed + matches.length);
-    return matches[rnd.nextInt(matches.length)];
+    return matches[Random(_seed + matches.length).nextInt(matches.length)];
   }
 
-  Widget _itemCard(String label, ClothingItem? item) {
-    return Card(
+  Widget _itemCard(BuildContext context, String label, IconData icon, ClothingItem? item, Color color) {
+    return Container(
       margin: const EdgeInsets.only(bottom: 12),
-      child: ListTile(
-        leading: CircleAvatar(child: Text(label[0])),
-        title: Text(item?.name ?? 'چیزی تو این دسته پیدا نشد'),
-        subtitle: item != null ? Text('${item.color} • ${item.season}') : null,
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surface,
+        borderRadius: BorderRadius.circular(18),
+      ),
+      child: Row(
+        children: [
+          CircleAvatar(
+            backgroundColor: color.withValues(alpha: 0.12),
+            child: Icon(icon, color: color),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(label, style: const TextStyle(fontSize: 12, color: Colors.black54)),
+                const SizedBox(height: 4),
+                Text(item?.name ?? 'برای این دسته نمونه‌ای نیست', style: const TextStyle(fontWeight: FontWeight.w700)),
+                if (item != null) ...[
+                  const SizedBox(height: 3),
+                  Text('${item.color} • ${item.season}', style: const TextStyle(fontSize: 12, color: Colors.black54)),
+                ],
+              ],
+            ),
+          ),
+          const Icon(Icons.chevron_left_rounded, color: Colors.black38),
+        ],
       ),
     );
   }
 
   @override
-  Widget build(BuildContext context, [WidgetRef? _]) {
+  Widget build(BuildContext context) {
     final items = ref.watch(closetProvider);
+    final primary = Theme.of(context).colorScheme.primary;
     final top = _pickFrom(items, _topCategories);
     final bottom = _pickFrom(items, _bottomCategories);
     final shoes = _pickFrom(items, _shoeCategories);
     final outer = _pickFrom(items, _outerCategories);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('پیشنهاد پوشش امروز')),
-      body: items.isEmpty
-          ? const Center(
-              child: Padding(
-                padding: EdgeInsets.all(24),
-                child: Text(
-                  'اول چند تا لباس تو کمدت ثبت کن تا بتونم پیشنهاد بدم.',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 16, color: Colors.black54),
-                ),
-              ),
-            )
-          : ListView(
-              padding: const EdgeInsets.all(16),
+      appBar: AppBar(title: const Text('استایل‌سازی')),
+      body: ListView(
+        padding: const EdgeInsets.fromLTRB(20, 8, 20, 28),
+        children: [
+          Container(
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(colors: [primary, Theme.of(context).colorScheme.secondary]),
+              borderRadius: BorderRadius.circular(24),
+            ),
+            child: const Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _itemCard('بالاتنه', top),
-                _itemCard('پایین‌تنه', bottom),
-                _itemCard('کفش', shoes),
-                _itemCard('رویه', outer),
-                const SizedBox(height: 12),
-                FilledButton.icon(
-                  onPressed: () => setState(() => _seed++),
-                  icon: const Icon(Icons.refresh),
-                  label: const Text('پیشنهاد جدید'),
-                ),
+                Icon(Icons.auto_awesome_rounded, color: Colors.white, size: 30),
+                SizedBox(height: 14),
+                Text('پیشنهاد امروز', style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.w800)),
+                SizedBox(height: 6),
+                Text('یک ترکیب هماهنگ برای حال‌وهوای امروزت بساز.', style: TextStyle(color: Colors.white70)),
               ],
             ),
+          ),
+          const SizedBox(height: 22),
+          Row(
+            children: [
+              const Expanded(child: Text('ترکیب کژوال شهری', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800))),
+              Text('${items.length} لباس در کمد', style: const TextStyle(fontSize: 12, color: Colors.black54)),
+            ],
+          ),
+          const SizedBox(height: 14),
+          _itemCard(context, 'بالاتنه', Icons.checkroom_outlined, top, primary),
+          _itemCard(context, 'پایین‌تنه', Icons.dry_cleaning_outlined, bottom, const Color(0xFF0088FF)),
+          _itemCard(context, 'کفش', Icons.hiking_outlined, shoes, const Color(0xFFE879A9)),
+          _itemCard(context, 'رویه', Icons.layers_outlined, outer, const Color(0xFFF59E0B)),
+          const SizedBox(height: 8),
+          FilledButton.icon(
+            onPressed: () => setState(() => _seed++),
+            icon: const Icon(Icons.refresh_rounded),
+            label: const Text('ساخت پیشنهاد جدید'),
+          ),
+          const SizedBox(height: 10),
+          OutlinedButton.icon(
+            onPressed: () {},
+            icon: const Icon(Icons.favorite_border_rounded),
+            label: const Text('ذخیرهٔ این استایل'),
+          ),
+        ],
+      ),
     );
   }
 }

@@ -6,35 +6,82 @@ class SettingsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final primary = Theme.of(context).colorScheme.primary;
     return Scaffold(
-      appBar: AppBar(title: const Text('تنظیمات')),
+      appBar: AppBar(title: const Text('پروفایل من')),
       body: ListView(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.fromLTRB(20, 8, 20, 24),
         children: [
-          const Card(
-            child: ListTile(
-              leading: Icon(Icons.person_outline),
-              title: Text('پروفایل'),
-              subtitle: Text('ویرایش اطلاعات حساب'),
+          Container(
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: primary.withValues(alpha: 0.08),
+              borderRadius: BorderRadius.circular(24),
+            ),
+            child: Column(
+              children: [
+                CircleAvatar(radius: 40, backgroundColor: primary.withValues(alpha: 0.16), child: Icon(Icons.person_outline_rounded, size: 42, color: primary)),
+                const SizedBox(height: 12),
+                const Text('سارا محمدی', style: TextStyle(fontSize: 20, fontWeight: FontWeight.w800)),
+                const SizedBox(height: 4),
+                const Text('استایل مینیمال و کژوال', style: TextStyle(color: Colors.black54)),
+                const SizedBox(height: 16),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: const [
+                    _ProfileStat(value: '۲۴', label: 'لباس'),
+                    _ProfileStat(value: '۸', label: 'استایل'),
+                    _ProfileStat(value: '۳', label: 'رویداد'),
+                  ],
+                ),
+              ],
             ),
           ),
-          const Card(
-            child: ListTile(
-              leading: Icon(Icons.notifications_outlined),
-              title: Text('اعلان‌ها'),
-              subtitle: Text('مدیریت یادآوری‌ها'),
-            ),
-          ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 24),
+          const Text('تنظیمات حساب', style: TextStyle(fontSize: 17, fontWeight: FontWeight.w800)),
+          const SizedBox(height: 10),
+          _SettingTile(icon: Icons.person_outline, title: 'اطلاعات شخصی', subtitle: 'نام، جنسیت و سبک مورد علاقه', onTap: () {}),
+          _SettingTile(icon: Icons.notifications_none_rounded, title: 'اعلان‌ها', subtitle: 'یادآوری رویدادها و پیشنهادها', onTap: () {}),
+          _SettingTile(icon: Icons.palette_outlined, title: 'ظاهر برنامه', subtitle: 'تم روشن و رنگ اصلی', onTap: () {}),
+          const SizedBox(height: 18),
           Card(
             child: ListTile(
-              leading: const Icon(Icons.logout, color: Colors.red),
-              title: const Text('خروج از حساب', style: TextStyle(color: Colors.red)),
+              leading: const Icon(Icons.logout_rounded, color: Colors.red),
+              title: const Text('خروج از حساب', style: TextStyle(color: Colors.red, fontWeight: FontWeight.w700)),
               onTap: () => context.go('/login'),
             ),
           ),
+          const SizedBox(height: 18),
+          const Center(child: Text('کمد من • نسخه نمایشی', style: TextStyle(fontSize: 12, color: Colors.black45))),
         ],
       ),
+    );
+  }
+}
+
+class _ProfileStat extends StatelessWidget {
+  const _ProfileStat({required this.value, required this.label});
+  final String value;
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(children: [Text(value, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w800)), const SizedBox(height: 3), Text(label, style: const TextStyle(fontSize: 12, color: Colors.black54))]);
+  }
+}
+
+class _SettingTile extends StatelessWidget {
+  const _SettingTile({required this.icon, required this.title, required this.subtitle, required this.onTap});
+  final IconData icon;
+  final String title;
+  final String subtitle;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      margin: const EdgeInsets.only(bottom: 10),
+      child: ListTile(leading: Icon(icon, color: Theme.of(context).colorScheme.primary), title: Text(title, style: const TextStyle(fontWeight: FontWeight.w700)), subtitle: Text(subtitle), trailing: const Icon(Icons.chevron_left_rounded), onTap: onTap),
     );
   }
 }
