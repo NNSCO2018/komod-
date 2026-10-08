@@ -4,6 +4,8 @@ import '../../features/gender/gender_screen.dart';
 import '../../features/dashboard/dashboard_screen.dart';
 import '../../features/auth/login_screen.dart';
 import '../../features/auth/otp_screen.dart';
+import '../../features/auth/welcome_screen.dart';
+import '../../features/auth/initial_profile_screen.dart';
 import '../../features/closet/closet_screen.dart';
 import '../../features/closet/add_clothing_screen.dart';
 import '../../features/suggestion/outfit_suggestion_screen.dart';
@@ -21,6 +23,8 @@ final GoRouter appRouter = GoRouter(
       path: '/otp',
       builder: (context, state) => OtpScreen(phone: state.extra as String? ?? ''),
     ),
+    GoRoute(path: '/welcome', builder: (context, state) => const WelcomeScreen()),
+    GoRoute(path: '/profile/setup', builder: (context, state) => const InitialProfileScreen()),
     GoRoute(path: '/dashboard', builder: (context, state) => const DashboardScreen()),
     GoRoute(path: '/closet', builder: (context, state) => const ClosetScreen()),
     GoRoute(path: '/closet/add', builder: (context, state) => const AddClothingScreen()),

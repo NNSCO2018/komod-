@@ -32,7 +32,7 @@ class _OtpScreenState extends State<OtpScreen> {
 
     try {
       await ApiService().verifyOtp(widget.phone, code);
-      if (mounted) context.go('/dashboard');
+      if (mounted) context.go('/welcome');
     } catch (e) {
       setState(() {
         _error = 'کد اشتباه یا منقضی شده. دوباره امتحان کن.';

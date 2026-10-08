@@ -20,11 +20,32 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
+    final primary = Theme.of(context).colorScheme.primary;
+    return Scaffold(
       body: Center(
-        child: Text(
-          'کمد',
-          style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 96,
+              height: 96,
+              decoration: BoxDecoration(
+                color: primary.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(32),
+              ),
+              child: Icon(Icons.checkroom_outlined, color: primary, size: 52),
+            ),
+            const SizedBox(height: 18),
+            const Text(
+              'کمد من',
+              style: TextStyle(fontSize: 30, fontWeight: FontWeight.w800),
+            ),
+            const SizedBox(height: 6),
+            const Text(
+              'استایل امروزت از اینجا شروع می‌شود',
+              style: TextStyle(color: Colors.black54),
+            ),
+          ],
         ),
       ),
     );

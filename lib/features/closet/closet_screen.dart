@@ -6,65 +6,73 @@ import 'providers/closet_provider.dart';
 class ClosetScreen extends ConsumerWidget {
   const ClosetScreen({super.key});
 
-  String _statusLabel(String status) {
-    switch (status) {
-      case 'dirty':
-        return 'کثیف';
-      case 'damaged':
-        return 'خراب';
-      case 'unavailable':
-        return 'ناموجود';
-      default:
-        return 'موجود';
-    }
-  }
+  static const _demoItems = [
+    ('کت کرم', Icons.checkroom_outlined, Color(0xFFF0DFCC)),
+    ('شلوار جین', Icons.dry_cleaning_outlined, Color(0xFFB5CAE2)),
+    ('کیف روشن', Icons.shopping_bag_outlined, Color(0xFFE8D7C2)),
+    ('کفش مشکی', Icons.hiking_outlined, Color(0xFF4B5563)),
+    ('پیراهن سفید', Icons.checkroom_outlined, Color(0xFFF7F7F7)),
+    ('اکسسوری', Icons.watch_outlined, Color(0xFFF6DD9C)),
+  ];
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final items = ref.watch(closetProvider);
-
+    final primary = Theme.of(context).colorScheme.primary;
     return Scaffold(
-      appBar: AppBar(title: const Text('کمد')),
-      body: items.isEmpty
-          ? Center(
-              child: Padding(
-                padding: const EdgeInsets.all(24),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Text(
-                      'هنوز لباسی تو کمدت ثبت نکردی.',
-                      style: TextStyle(fontSize: 16, color: Colors.black54),
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: 16),
-                    FilledButton(
-                      onPressed: () => context.push('/closet/add'),
-                      child: const Text('افزودن اولین لباس'),
-                    ),
-                  ],
-                ),
-              ),
-            )
-          : ListView.builder(
-              padding: const EdgeInsets.all(16),
-              itemCount: items.length,
+      appBar: AppBar(
+        title: const Text('کمد من'),
+        actions: [IconButton(onPressed: () {}, icon: const Icon(Icons.search_rounded))],
+      ),
+      body: Column(
+        children: [
+          SizedBox(
+            height: 48,
+            child: ListView(
+              scrollDirection: Axis.horizontal,
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              children: ['همه', 'بالاتنه', 'پایین‌تنه', 'کفش', 'اکسسوری']
+                  .map((label) => Padding(
+                        padding: const EdgeInsets.only(left: 8),
+                        child: ChoiceChip(
+                          label: Text(label),
+                          selected: label == 'همه',
+                          selectedColor: primary.withValues(alpha: 0.16),
+                          onSelected: (_) {},
+                        ),
+                      ))
+                  .toList(),
+            ),
+          ),
+          Expanded(
+            child: GridView.builder(
+              padding: const EdgeInsets.fromLTRB(16, 12, 16, 96),
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2, crossAxisSpacing: 12, mainAxisSpacing: 12, childAspectRatio: 0.78),
+              itemCount: items.isEmpty ? _demoItems.length : items.length,
               itemBuilder: (context, index) {
-                final item = items[index];
-                return Card(
-                  margin: const EdgeInsets.only(bottom: 12),
-                  child: ListTile(
-                    title: Text(item.name),
-                    subtitle: Text('${item.category} • ${item.color} • ${item.season}'),
-                    trailing: Chip(label: Text(_statusLabel(item.status))),
+                final demo = items.isEmpty ? _demoItems[index] : null;
+                final name = demo?.$1 ?? items[index].name;
+                final icon = demo?.$2 ?? Icons.checkroom_outlined;
+                final color = demo?.$3 ?? primary.withValues(alpha: 0.14);
+                return Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(color: Theme.of(context).colorScheme.surface, borderRadius: BorderRadius.circular(18)),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(child: Center(child: Icon(icon, size: 68, color: color))),
+                      Text(name, style: const TextStyle(fontWeight: FontWeight.w700)),
+                      const SizedBox(height: 3),
+                      const Text('آماده پوشیدن', style: TextStyle(fontSize: 12, color: Colors.black54)),
+                    ],
                   ),
                 );
               },
             ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => context.push('/closet/add'),
-        child: const Icon(Icons.add),
+          ),
+        ],
       ),
+      floatingActionButton: FloatingActionButton.extended(onPressed: () => context.push('/closet/add'), icon: const Icon(Icons.add), label: const Text('افزودن لباس')),
     );
   }
 }
