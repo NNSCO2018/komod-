@@ -19,6 +19,8 @@ class _AddClothingScreenState extends ConsumerState<AddClothingScreen> {
   String _category = 'تیشرت';
   String _season = 'همه فصل‌ها';
   Uint8List? _photoBytes;
+  bool _isAnalyzing = false;
+  String? _analysisSummary;
 
   final _categories = const ['تیشرت', 'شلوار', 'کفش', 'کت', 'پیراهن', 'اکسسوری'];
   final _seasons = const ['بهار', 'تابستان', 'پاییز', 'زمستان', 'همه فصل‌ها'];
@@ -35,7 +37,38 @@ class _AddClothingScreenState extends ConsumerState<AddClothingScreen> {
     final picked = await picker.pickImage(source: source, imageQuality: 80);
     if (picked == null) return;
     final bytes = await picked.readAsBytes();
-    setState(() => _photoBytes = bytes);
+    setState(() {
+      _photoBytes = bytes;
+      _analysisSummary = null;
+    });
+  }
+
+  Future<void> _analyzeImage() async {
+    final photoBytes = _photoBytes;
+    if (photoBytes == null) return;
+
+    setState(() => _isAnalyzing = true);
+    await Future<void>.delayed(const Duration(milliseconds: 900));
+    if (!mounted) return;
+
+    final suggestions = [
+      ('پیراهن', 'سفید', 'همه فصل‌ها'),
+      ('شلوار', 'آبی', 'همه فصل‌ها'),
+      ('کت', 'کرم', 'پاییز'),
+      ('تیشرت', 'مشکی', 'تابستان'),
+      ('کفش', 'مشکی', 'همه فصل‌ها'),
+    ];
+    final suggestion = suggestions[photoBytes.length % suggestions.length];
+    setState(() {
+      _category = suggestion.$1;
+      _colorController.text = suggestion.$2;
+      _season = suggestion.$3;
+      if (_nameController.text.trim().isEmpty) {
+        _nameController.text = '${suggestion.$1} ${suggestion.$2}';
+      }
+      _analysisSummary = '${suggestion.$1} • ${suggestion.$2} • ${suggestion.$3}';
+      _isAnalyzing = false;
+    });
   }
 
   void _showPickerOptions() {
@@ -117,6 +150,28 @@ class _AddClothingScreenState extends ConsumerState<AddClothingScreen> {
                     : null,
               ),
             ),
+            const SizedBox(height: 16),
+            if (_photoBytes != null) ...[
+              OutlinedButton.icon(
+                onPressed: _isAnalyzing ? null : _analyzeImage,
+                icon: _isAnalyzing
+                    ? const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2))
+                    : const Icon(Icons.auto_awesome_rounded),
+                label: Text(_isAnalyzing ? 'در حال تحلیل عکس...' : 'تشخیص لباس از عکس'),
+              ),
+              const SizedBox(height: 10),
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.08),
+                  borderRadius: BorderRadius.circular(14),
+                ),
+                child: Text(
+                  _analysisSummary ?? 'پس از انتخاب عکس، تشخیص نمایشی را اجرا کن.',
+                  style: const TextStyle(fontSize: 13, color: Colors.black54),
+                ),
+              ),
+            ],
             const SizedBox(height: 24),
             TextField(
               controller: _nameController,
