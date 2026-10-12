@@ -8,6 +8,10 @@ class ClosetNotifier extends Notifier<List<ClothingItem>> {
   void addItem(ClothingItem item) {
     state = [...state, item];
   }
+
+  void removeItem(String id) {
+    state = state.where((item) => item.id != id).toList();
+  }
 }
 
 final closetProvider = NotifierProvider<ClosetNotifier, List<ClothingItem>>(
