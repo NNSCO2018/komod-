@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 class ClothingItem {
   final String id;
   final String name;
@@ -5,6 +7,7 @@ class ClothingItem {
   final String color;
   final String season;
   final String status;
+  final Uint8List? photoBytes;
 
   const ClothingItem({
     required this.id,
@@ -13,5 +16,6 @@ class ClothingItem {
     required this.color,
     required this.season,
     this.status = 'available',
+    this.photoBytes,
   });
 }

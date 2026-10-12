@@ -76,6 +76,7 @@ class _AddClothingScreenState extends ConsumerState<AddClothingScreen> {
             category: _category,
             color: _colorController.text.trim(),
             season: _season,
+            photoBytes: _photoBytes,
           ),
         );
     context.pop();

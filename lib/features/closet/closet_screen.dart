@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'models/clothing_item.dart';
 import 'providers/closet_provider.dart';
 
 class ClosetScreen extends ConsumerWidget {
@@ -50,29 +51,52 @@ class ClosetScreen extends ConsumerWidget {
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2, crossAxisSpacing: 12, mainAxisSpacing: 12, childAspectRatio: 0.78),
               itemCount: items.isEmpty ? _demoItems.length : items.length,
               itemBuilder: (context, index) {
+                final item = items.isEmpty ? null : items[index];
                 final demo = items.isEmpty ? _demoItems[index] : null;
-                final name = demo?.$1 ?? items[index].name;
+                final name = demo?.$1 ?? item!.name;
                 final icon = demo?.$2 ?? Icons.checkroom_outlined;
                 final color = demo?.$3 ?? primary.withValues(alpha: 0.14);
-                return Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(color: Theme.of(context).colorScheme.surface, borderRadius: BorderRadius.circular(18)),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Expanded(child: Center(child: Icon(icon, size: 68, color: color))),
-                      Text(name, style: const TextStyle(fontWeight: FontWeight.w700)),
-                      const SizedBox(height: 3),
-                      const Text('آماده پوشیدن', style: TextStyle(fontSize: 12, color: Colors.black54)),
-                    ],
-                  ),
-                );
+                return _ClosetItemCard(name: name, icon: icon, color: color, item: item);
               },
             ),
           ),
         ],
       ),
       floatingActionButton: FloatingActionButton.extended(onPressed: () => context.push('/closet/add'), icon: const Icon(Icons.add), label: const Text('افزودن لباس')),
+    );
+  }
+}
+
+class _ClosetItemCard extends StatelessWidget {
+  const _ClosetItemCard({required this.name, required this.icon, required this.color, this.item});
+
+  final String name;
+  final IconData icon;
+  final Color color;
+  final ClothingItem? item;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(color: Theme.of(context).colorScheme.surface, borderRadius: BorderRadius.circular(18)),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: item?.photoBytes != null
+                  ? Image.memory(item!.photoBytes!, width: double.infinity, fit: BoxFit.cover)
+                  : Center(child: Icon(icon, size: 68, color: color)),
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(name, style: const TextStyle(fontWeight: FontWeight.w700)),
+          const SizedBox(height: 3),
+          Text(item?.color.isNotEmpty == true ? item!.color : 'آماده پوشیدن', style: const TextStyle(fontSize: 12, color: Colors.black54)),
+        ],
+      ),
     );
   }
 }
