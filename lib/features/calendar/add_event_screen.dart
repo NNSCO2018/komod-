@@ -14,11 +14,16 @@ class AddEventScreen extends ConsumerStatefulWidget {
 
 class _AddEventScreenState extends ConsumerState<AddEventScreen> {
   final _titleController = TextEditingController();
+  final _noteController = TextEditingController();
   Jalali _selectedDate = Jalali.now();
+  String _type = 'عمومی';
+
+  static const _types = ['عمومی', 'کاری', 'مهمانی', 'سفر', 'ورزش'];
 
   @override
   void dispose() {
     _titleController.dispose();
+    _noteController.dispose();
     super.dispose();
   }
 
@@ -32,8 +37,8 @@ class _AddEventScreenState extends ConsumerState<AddEventScreen> {
     if (picked != null) setState(() => _selectedDate = picked);
   }
 
-  String _formatJalali(Jalali j) =>
-      '${j.year}/${j.month.toString().padLeft(2, '0')}/${j.day.toString().padLeft(2, '0')}';
+  String _formatJalali(Jalali jalali) =>
+      '${jalali.year}/${jalali.month.toString().padLeft(2, '0')}/${jalali.day.toString().padLeft(2, '0')}';
 
   void _save() {
     final title = _titleController.text.trim();
@@ -43,6 +48,8 @@ class _AddEventScreenState extends ConsumerState<AddEventScreen> {
             id: DateTime.now().millisecondsSinceEpoch.toString(),
             title: title,
             date: _selectedDate.toDateTime(),
+            type: _type,
+            note: _noteController.text.trim(),
           ),
         );
     context.pop();
@@ -50,37 +57,83 @@ class _AddEventScreenState extends ConsumerState<AddEventScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final primary = Theme.of(context).colorScheme.primary;
+    final previewText = _titleController.text.trim().isEmpty ? 'عنوان رویداد' : _titleController.text.trim();
+
     return Scaffold(
-      appBar: AppBar(title: const Text('افزودن رویداد')),
+      appBar: AppBar(title: const Text('رویداد جدید')),
       body: SafeArea(
-        child: Padding(
+        child: ListView(
           padding: const EdgeInsets.all(24),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              TextField(
-                controller: _titleController,
-                decoration: const InputDecoration(
-                  labelText: 'عنوان رویداد',
-                  border: OutlineInputBorder(),
-                ),
+          children: [
+            Container(
+              padding: const EdgeInsets.all(18),
+              decoration: BoxDecoration(
+                color: primary.withValues(alpha: 0.08),
+                borderRadius: BorderRadius.circular(20),
               ),
-              const SizedBox(height: 16),
-              OutlinedButton.icon(
-                onPressed: _pickDate,
-                icon: const Icon(Icons.calendar_today_outlined),
-                label: Text(_formatJalali(_selectedDate)),
+              child: Row(
+                children: [
+                  CircleAvatar(backgroundColor: primary, child: const Icon(Icons.event_available_rounded, color: Colors.white)),
+                  const SizedBox(width: 14),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(previewText, style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 16)),
+                        const SizedBox(height: 5),
+                        Text('${_type} • ${_formatJalali(_selectedDate)}', style: const TextStyle(fontSize: 13, color: Colors.black54)),
+                      ],
+                    ),
+                  ),
+                ],
               ),
-              const SizedBox(height: 24),
-              FilledButton(
-                onPressed: _save,
-                child: const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 14),
-                  child: Text('ذخیره'),
-                ),
+            ),
+            const SizedBox(height: 24),
+            TextField(
+              controller: _titleController,
+              onChanged: (_) => setState(() {}),
+              decoration: const InputDecoration(
+                labelText: 'عنوان رویداد',
+                hintText: 'مثلاً مهمانی دوستانه',
+                prefixIcon: Icon(Icons.edit_outlined),
               ),
-            ],
-          ),
+            ),
+            const SizedBox(height: 16),
+            DropdownButtonFormField<String>(
+              initialValue: _type,
+              decoration: const InputDecoration(
+                labelText: 'نوع رویداد',
+                prefixIcon: Icon(Icons.category_outlined),
+              ),
+              items: _types.map((type) => DropdownMenuItem(value: type, child: Text(type))).toList(),
+              onChanged: (value) => setState(() => _type = value ?? _type),
+            ),
+            const SizedBox(height: 16),
+            OutlinedButton.icon(
+              onPressed: _pickDate,
+              icon: const Icon(Icons.calendar_today_outlined),
+              label: Text('تاریخ: ${_formatJalali(_selectedDate)}'),
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              controller: _noteController,
+              maxLines: 3,
+              decoration: const InputDecoration(
+                labelText: 'یادداشت (اختیاری)',
+                hintText: 'مثلاً استایل رسمی و کفش پاشنه‌بلند',
+                border: OutlineInputBorder(),
+              ),
+            ),
+            const SizedBox(height: 28),
+            FilledButton(
+              onPressed: _save,
+              child: const Padding(
+                padding: EdgeInsets.symmetric(vertical: 14),
+                child: Text('ذخیره رویداد'),
+              ),
+            ),
+          ],
         ),
       ),
     );
