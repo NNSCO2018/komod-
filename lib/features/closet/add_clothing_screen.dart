@@ -34,7 +34,12 @@ class _AddClothingScreenState extends ConsumerState<AddClothingScreen> {
 
   Future<void> _pickImage(ImageSource source) async {
     final picker = ImagePicker();
-    final picked = await picker.pickImage(source: source, imageQuality: 80);
+    final picked = await picker.pickImage(
+      source: source,
+      imageQuality: 72,
+      maxWidth: 1200,
+      maxHeight: 1200,
+    );
     if (picked == null) return;
     final bytes = await picked.readAsBytes();
     setState(() {

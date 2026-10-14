@@ -169,7 +169,11 @@ class _ClosetItemCard extends StatelessWidget {
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(12),
                     child: item?.photoBytes != null
-                        ? Image.memory(item!.photoBytes!, fit: BoxFit.cover)
+                        ? Image.memory(
+                            item!.photoBytes!,
+                            fit: BoxFit.cover,
+                            cacheWidth: 600,
+                          )
                         : Center(child: Icon(icon, size: 68, color: color)),
                   ),
                 ),
