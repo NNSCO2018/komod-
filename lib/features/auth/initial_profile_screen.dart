@@ -48,10 +48,10 @@ class _InitialProfileScreenState extends ConsumerState<InitialProfileScreen> {
             TextField(
               controller: _nameController,
               textInputAction: TextInputAction.next,
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 labelText: 'نام',
                 hintText: 'مثلاً $exampleName',
-                prefixIcon: Icon(Icons.person_outline),
+                prefixIcon: const Icon(Icons.person_outline),
               ),
             ),
             const SizedBox(height: 18),
