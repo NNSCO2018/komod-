@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../../core/gender_provider.dart';
 import '../../core/profile_provider.dart';
 
 class InitialProfileScreen extends ConsumerStatefulWidget {
@@ -25,6 +26,8 @@ class _InitialProfileScreenState extends ConsumerState<InitialProfileScreen> {
   @override
   Widget build(BuildContext context) {
     final profile = ref.watch(profileProvider);
+    final gender = ref.watch(genderProvider);
+    final exampleName = gender == Gender.male ? 'نادر' : 'هستی';
     if (!_initialized) {
       _nameController = TextEditingController(text: profile.name);
       _initialized = true;
@@ -47,7 +50,7 @@ class _InitialProfileScreenState extends ConsumerState<InitialProfileScreen> {
               textInputAction: TextInputAction.next,
               decoration: const InputDecoration(
                 labelText: 'نام',
-                hintText: 'مثلاً سارا',
+                hintText: 'مثلاً $exampleName',
                 prefixIcon: Icon(Icons.person_outline),
               ),
             ),
