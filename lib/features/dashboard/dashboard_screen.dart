@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../../core/profile_provider.dart';
 
-class DashboardScreen extends StatelessWidget {
+class DashboardScreen extends ConsumerWidget {
   const DashboardScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final profile = ref.watch(profileProvider);
     final primary = Theme.of(context).colorScheme.primary;
     return Scaffold(
       body: SafeArea(
@@ -24,7 +27,7 @@ class DashboardScreen extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('سلام سارا!', style: TextStyle(fontSize: 19, fontWeight: FontWeight.w800)),
+                      Text('سلام ${profile.name}!', style: TextStyle(fontSize: 19, fontWeight: FontWeight.w800)),
                       SizedBox(height: 2),
                       Text('امروز آماده‌ای بدرخشی؟', style: TextStyle(color: Colors.black54)),
                     ],

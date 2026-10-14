@@ -1,17 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../../core/profile_provider.dart';
 
-class InitialProfileScreen extends StatefulWidget {
+class InitialProfileScreen extends ConsumerStatefulWidget {
   const InitialProfileScreen({super.key});
 
   @override
   State<InitialProfileScreen> createState() => _InitialProfileScreenState();
 }
 
-class _InitialProfileScreenState extends State<InitialProfileScreen> {
-  final _nameController = TextEditingController();
+class _InitialProfileScreenState extends ConsumerState<InitialProfileScreen> {
+  late final TextEditingController _nameController;
   String? _ageRange;
   String? _style;
+  bool _initialized = false;
 
   @override
   void dispose() {
@@ -21,6 +24,12 @@ class _InitialProfileScreenState extends State<InitialProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final profile = ref.watch(profileProvider);
+    if (!_initialized) {
+      _nameController = TextEditingController(text: profile.name);
+      _initialized = true;
+    }
+
     return Scaffold(
       appBar: AppBar(title: const Text('اطلاعات اولیه')),
       body: SafeArea(
@@ -74,7 +83,16 @@ class _InitialProfileScreenState extends State<InitialProfileScreen> {
             ),
             const SizedBox(height: 36),
             FilledButton(
-              onPressed: () => context.go('/dashboard'),
+              onPressed: () async {
+                final name = _nameController.text.trim();
+                if (name.isEmpty) return;
+                await ref.read(profileProvider.notifier).save(
+                      name: name,
+                      ageRange: _ageRange,
+                      style: _style,
+                    );
+                if (context.mounted) context.go('/dashboard');
+              },
               child: const Text('تایید و ادامه'),
             ),
           ],
