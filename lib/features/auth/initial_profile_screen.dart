@@ -7,7 +7,7 @@ class InitialProfileScreen extends ConsumerStatefulWidget {
   const InitialProfileScreen({super.key});
 
   @override
-  State<InitialProfileScreen> createState() => _InitialProfileScreenState();
+  ConsumerState<InitialProfileScreen> createState() => _InitialProfileScreenState();
 }
 
 class _InitialProfileScreenState extends ConsumerState<InitialProfileScreen> {

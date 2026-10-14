@@ -23,13 +23,13 @@ class DashboardScreen extends ConsumerWidget {
                   child: Icon(Icons.person_outline, color: primary),
                 ),
                 const SizedBox(width: 12),
-                const Expanded(
+                Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('سلام ${profile.name}!', style: TextStyle(fontSize: 19, fontWeight: FontWeight.w800)),
-                      SizedBox(height: 2),
-                      Text('امروز آماده‌ای بدرخشی؟', style: TextStyle(color: Colors.black54)),
+                      Text('سلام ${profile.name}!', style: const TextStyle(fontSize: 19, fontWeight: FontWeight.w800)),
+                      const SizedBox(height: 2),
+                      const Text('امروز آماده‌ای بدرخشی؟', style: TextStyle(color: Colors.black54)),
                     ],
                   ),
                 ),
