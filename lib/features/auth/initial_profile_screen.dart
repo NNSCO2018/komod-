@@ -30,6 +30,8 @@ class _InitialProfileScreenState extends ConsumerState<InitialProfileScreen> {
     final exampleName = gender == Gender.male ? 'نادر' : 'هستی';
     if (!_initialized) {
       _nameController = TextEditingController(text: profile.name);
+      _ageRange = profile.ageRange;
+      _style = profile.style;
       _initialized = true;
     }
 
