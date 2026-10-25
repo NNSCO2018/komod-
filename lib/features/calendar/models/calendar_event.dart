@@ -12,4 +12,20 @@ class CalendarEvent {
     this.type = 'عمومی',
     this.note = '',
   });
+
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'title': title,
+        'date': date.toIso8601String(),
+        'type': type,
+        'note': note,
+      };
+
+  factory CalendarEvent.fromJson(Map<String, dynamic> json) => CalendarEvent(
+        id: json['id'] as String,
+        title: json['title'] as String,
+        date: DateTime.parse(json['date'] as String),
+        type: json['type'] as String? ?? 'عمومی',
+        note: json['note'] as String? ?? '',
+      );
 }
