@@ -2,13 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/profile_provider.dart';
+import '../calendar/providers/calendar_provider.dart';
+import '../closet/providers/closet_provider.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
 
+  String _toPersianNumber(int value) {
+    const digits = '۰۱۲۳۴۵۶۷۸۹';
+    return value.toString().split('').map((digit) => digits[int.parse(digit)]).join();
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final profile = ref.watch(profileProvider);
+    final clothingCount = ref.watch(closetProvider).length;
+    final eventCount = ref.watch(calendarProvider).length;
     final primary = Theme.of(context).colorScheme.primary;
     return Scaffold(
       appBar: AppBar(title: const Text('پروفایل من')),
@@ -31,10 +40,10 @@ class SettingsScreen extends ConsumerWidget {
                 const SizedBox(height: 16),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: const [
-                    _ProfileStat(value: '۲۴', label: 'لباس'),
-                    _ProfileStat(value: '۸', label: 'استایل'),
-                    _ProfileStat(value: '۳', label: 'رویداد'),
+                  children: [
+                    _ProfileStat(value: _toPersianNumber(clothingCount == 0 ? 6 : clothingCount), label: 'لباس'),
+                    const _ProfileStat(value: '۱', label: 'استایل'),
+                    _ProfileStat(value: _toPersianNumber(eventCount == 0 ? 3 : eventCount), label: 'رویداد'),
                   ],
                 ),
               ],
