@@ -43,7 +43,7 @@ class SettingsScreen extends ConsumerWidget {
           const SizedBox(height: 24),
           const Text('تنظیمات حساب', style: TextStyle(fontSize: 17, fontWeight: FontWeight.w800)),
           const SizedBox(height: 10),
-          _SettingTile(icon: Icons.person_outline, title: 'اطلاعات شخصی', subtitle: 'نام، جنسیت و سبک مورد علاقه', onTap: () {}),
+          _SettingTile(icon: Icons.person_outline, title: 'اطلاعات شخصی', subtitle: 'نام، جنسیت و سبک مورد علاقه', onTap: () => context.push('/profile/setup')),
           _SettingTile(icon: Icons.notifications_none_rounded, title: 'اعلان‌ها', subtitle: 'یادآوری رویدادها و پیشنهادها', onTap: () {}),
           _SettingTile(icon: Icons.palette_outlined, title: 'ظاهر برنامه', subtitle: 'تم روشن و رنگ اصلی', onTap: () {}),
           const SizedBox(height: 18),
