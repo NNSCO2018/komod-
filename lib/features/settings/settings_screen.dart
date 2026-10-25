@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../../core/profile_provider.dart';
 
-class SettingsScreen extends StatelessWidget {
+class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final profile = ref.watch(profileProvider);
     final primary = Theme.of(context).colorScheme.primary;
     return Scaffold(
       appBar: AppBar(title: const Text('پروفایل من')),
@@ -22,9 +25,9 @@ class SettingsScreen extends StatelessWidget {
               children: [
                 CircleAvatar(radius: 40, backgroundColor: primary.withValues(alpha: 0.16), child: Icon(Icons.person_outline_rounded, size: 42, color: primary)),
                 const SizedBox(height: 12),
-                const Text('سارا محمدی', style: TextStyle(fontSize: 20, fontWeight: FontWeight.w800)),
+                Text(profile.name, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w800)),
                 const SizedBox(height: 4),
-                const Text('استایل مینیمال و کژوال', style: TextStyle(color: Colors.black54)),
+                Text(profile.style ?? 'استایل خودت را انتخاب کن', style: const TextStyle(color: Colors.black54)),
                 const SizedBox(height: 16),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
