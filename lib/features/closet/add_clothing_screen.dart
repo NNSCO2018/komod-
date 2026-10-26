@@ -7,7 +7,9 @@ import 'models/clothing_item.dart';
 import 'providers/closet_provider.dart';
 
 class AddClothingScreen extends ConsumerStatefulWidget {
-  const AddClothingScreen({super.key});
+  final ClothingItem? item;
+
+  const AddClothingScreen({super.key, this.item});
 
   @override
   ConsumerState<AddClothingScreen> createState() => _AddClothingScreenState();
@@ -24,6 +26,19 @@ class _AddClothingScreenState extends ConsumerState<AddClothingScreen> {
 
   final _categories = const ['تیشرت', 'شلوار', 'کفش', 'کت', 'پیراهن', 'اکسسوری'];
   final _seasons = const ['بهار', 'تابستان', 'پاییز', 'زمستان', 'همه فصل‌ها'];
+
+  @override
+  void initState() {
+    super.initState();
+    final item = widget.item;
+    if (item != null) {
+      _nameController.text = item.name;
+      _colorController.text = item.color;
+      _category = item.category;
+      _season = item.season;
+      _photoBytes = item.photoBytes;
+    }
+  }
 
   @override
   void dispose() {
@@ -107,23 +122,26 @@ class _AddClothingScreenState extends ConsumerState<AddClothingScreen> {
   void _save() {
     final name = _nameController.text.trim();
     if (name.isEmpty) return;
-    ref.read(closetProvider.notifier).addItem(
-          ClothingItem(
-            id: DateTime.now().millisecondsSinceEpoch.toString(),
-            name: name,
-            category: _category,
-            color: _colorController.text.trim(),
-            season: _season,
-            photoBytes: _photoBytes,
-          ),
-        );
+    final item = ClothingItem(
+      id: widget.item?.id ?? DateTime.now().millisecondsSinceEpoch.toString(),
+      name: name,
+      category: _category,
+      color: _colorController.text.trim(),
+      season: _season,
+      photoBytes: _photoBytes,
+    );
+    if (widget.item == null) {
+      ref.read(closetProvider.notifier).addItem(item);
+    } else {
+      ref.read(closetProvider.notifier).updateItem(item);
+    }
     context.pop();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('افزودن لباس')),
+      appBar: AppBar(title: Text(widget.item == null ? 'افزودن لباس' : 'ویرایش لباس')),
       body: SafeArea(
         child: ListView(
           padding: const EdgeInsets.all(24),
@@ -222,7 +240,7 @@ class _AddClothingScreenState extends ConsumerState<AddClothingScreen> {
               onPressed: _save,
               child: const Padding(
                 padding: EdgeInsets.symmetric(vertical: 14),
-                child: Text('ذخیره'),
+                child: Text(widget.item == null ? 'ذخیره لباس' : 'ذخیره تغییرات'),
               ),
             ),
           ],

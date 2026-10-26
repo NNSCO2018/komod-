@@ -31,6 +31,11 @@ class ClosetNotifier extends Notifier<List<ClothingItem>> {
     _persist(state);
   }
 
+  void updateItem(ClothingItem item) {
+    state = [for (final current in state) current.id == item.id ? item : current];
+    _persist(state);
+  }
+
   void removeItem(String id) {
     state = state.where((item) => item.id != id).toList();
     _persist(state);

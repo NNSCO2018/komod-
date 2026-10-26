@@ -148,6 +148,7 @@ class _ClosetScreenState extends ConsumerState<ClosetScreen> {
                         icon: demo?.$3 ?? Icons.checkroom_outlined,
                         color: demo?.$4 ?? primary.withValues(alpha: 0.14),
                         item: item,
+                        onTap: item == null ? null : () => context.push('/closet/add', extra: item),
                         onDelete: item == null ? null : () => _confirmDelete(item),
                       );
                     },
@@ -170,6 +171,7 @@ class _ClosetItemCard extends StatelessWidget {
     required this.icon,
     required this.color,
     this.item,
+    this.onTap,
     this.onDelete,
   });
 
@@ -177,11 +179,15 @@ class _ClosetItemCard extends StatelessWidget {
   final IconData icon;
   final Color color;
   final ClothingItem? item;
+  final VoidCallback? onTap;
   final VoidCallback? onDelete;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(18),
+      child: Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
@@ -231,6 +237,7 @@ class _ClosetItemCard extends StatelessWidget {
           ),
         ],
       ),
-    );
+    ),
+  );
   }
 }
