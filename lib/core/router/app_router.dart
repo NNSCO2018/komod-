@@ -10,6 +10,7 @@ import '../../features/closet/closet_screen.dart';
 import '../../features/closet/models/clothing_item.dart';
 import '../../features/closet/add_clothing_screen.dart';
 import '../../features/suggestion/outfit_suggestion_screen.dart';
+import '../../features/suggestion/saved_outfits_screen.dart';
 import '../../features/calendar/calendar_screen.dart';
 import '../../features/calendar/add_event_screen.dart';
 import '../../features/settings/settings_screen.dart';
@@ -33,6 +34,7 @@ final GoRouter appRouter = GoRouter(
       builder: (context, state) => AddClothingScreen(item: state.extra as ClothingItem?),
     ),
     GoRoute(path: '/suggestion', builder: (context, state) => const OutfitSuggestionScreen()),
+    GoRoute(path: '/saved-outfits', builder: (context, state) => const SavedOutfitsScreen()),
     GoRoute(path: '/calendar', builder: (context, state) => const CalendarScreen()),
     GoRoute(path: '/calendar/add', builder: (context, state) => const AddEventScreen()),
     GoRoute(path: '/settings', builder: (context, state) => const SettingsScreen()),

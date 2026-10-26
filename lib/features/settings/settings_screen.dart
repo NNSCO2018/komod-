@@ -5,6 +5,7 @@ import '../../core/profile_provider.dart';
 import '../../core/theme_mode_provider.dart';
 import '../calendar/providers/calendar_provider.dart';
 import '../closet/providers/closet_provider.dart';
+import '../suggestion/saved_outfits_provider.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
@@ -53,6 +54,7 @@ class SettingsScreen extends ConsumerWidget {
     final profile = ref.watch(profileProvider);
     final clothingCount = ref.watch(closetProvider).length;
     final eventCount = ref.watch(calendarProvider).length;
+    final savedOutfitsCount = ref.watch(savedOutfitsProvider).length;
     final themeMode = ref.watch(themeModeProvider);
     final primary = Theme.of(context).colorScheme.primary;
     return Scaffold(
@@ -78,7 +80,7 @@ class SettingsScreen extends ConsumerWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     _ProfileStat(value: _toPersianNumber(clothingCount == 0 ? 6 : clothingCount), label: 'لباس'),
-                    const _ProfileStat(value: '۱', label: 'استایل'),
+                    _ProfileStat(value: _toPersianNumber(savedOutfitsCount), label: 'استایل'),
                     _ProfileStat(value: _toPersianNumber(eventCount == 0 ? 3 : eventCount), label: 'رویداد'),
                   ],
                 ),
@@ -89,6 +91,12 @@ class SettingsScreen extends ConsumerWidget {
           const Text('تنظیمات حساب', style: TextStyle(fontSize: 17, fontWeight: FontWeight.w800)),
           const SizedBox(height: 10),
           _SettingTile(icon: Icons.person_outline, title: 'اطلاعات شخصی', subtitle: 'نام، جنسیت و سبک مورد علاقه', onTap: () => context.push('/profile/setup')),
+          _SettingTile(
+            icon: Icons.favorite_border_rounded,
+            title: 'استایل‌های ذخیره‌شده',
+            subtitle: '${_toPersianNumber(savedOutfitsCount)} استایل ذخیره شده',
+            onTap: () => context.push('/saved-outfits'),
+          ),
           _SettingTile(icon: Icons.notifications_none_rounded, title: 'اعلان‌ها', subtitle: 'یادآوری رویدادها و پیشنهادها', onTap: () {}),
           _SettingTile(
             icon: Icons.palette_outlined,

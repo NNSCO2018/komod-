@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../closet/models/clothing_item.dart';
 import '../closet/providers/closet_provider.dart';
+import 'saved_outfits_provider.dart';
 
 const _topCategories = ['تیشرت', 'پیراهن'];
 const _bottomCategories = ['شلوار'];
@@ -67,6 +68,19 @@ class _OutfitSuggestionScreenState extends ConsumerState<OutfitSuggestionScreen>
     );
   }
 
+  void _saveOutfit(ClothingItem? top, ClothingItem? bottom, ClothingItem? shoes, ClothingItem? outer) {
+    final items = [top, bottom, shoes, outer].whereType<ClothingItem>().map((item) => item.name).toList();
+    ref.read(savedOutfitsProvider.notifier).add(
+          SavedOutfit(
+            id: DateTime.now().millisecondsSinceEpoch.toString(),
+            title: 'کژوال شهری',
+            items: items,
+            createdAt: DateTime.now(),
+          ),
+        );
+    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('استایل ذخیره شد.')));
+  }
+
   @override
   Widget build(BuildContext context) {
     final items = ref.watch(closetProvider);
@@ -119,7 +133,7 @@ class _OutfitSuggestionScreenState extends ConsumerState<OutfitSuggestionScreen>
           ),
           const SizedBox(height: 10),
           OutlinedButton.icon(
-            onPressed: () {},
+            onPressed: () => _saveOutfit(top, bottom, shoes, outer),
             icon: const Icon(Icons.favorite_border_rounded),
             label: const Text('ذخیرهٔ این استایل'),
           ),
