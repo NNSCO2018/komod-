@@ -4,6 +4,7 @@ import 'package:persian_datetime_picker/persian_datetime_picker.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'core/app_theme.dart';
 import 'core/gender_provider.dart';
+import 'core/theme_mode_provider.dart';
 import 'core/router/app_router.dart';
 
 class KomodApp extends ConsumerWidget {
@@ -12,6 +13,7 @@ class KomodApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final gender = ref.watch(genderProvider);
+    final themeMode = ref.watch(themeModeProvider);
     return MaterialApp.router(
       title: 'Komod',
       debugShowCheckedModeBanner: false,
@@ -33,7 +35,7 @@ class KomodApp extends ConsumerWidget {
       },
       theme: AppTheme.light(seedColor: gender.primaryColor),
       darkTheme: AppTheme.dark(seedColor: gender.primaryColor),
-      themeMode: ThemeMode.light,
+      themeMode: themeMode,
     );
   }
 }

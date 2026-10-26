@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/profile_provider.dart';
+import '../../core/theme_mode_provider.dart';
 import '../calendar/providers/calendar_provider.dart';
 import '../closet/providers/closet_provider.dart';
 
@@ -13,11 +14,46 @@ class SettingsScreen extends ConsumerWidget {
     return value.toString().split('').map((digit) => digits[int.parse(digit)]).join();
   }
 
+  Future<void> _showThemePicker(BuildContext context, WidgetRef ref) {
+    return showModalBottomSheet<void>(
+      context: context,
+      builder: (sheetContext) => SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(20, 12, 20, 24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text('ظاهر برنامه', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800)),
+              const SizedBox(height: 12),
+              ListTile(
+                leading: const Icon(Icons.light_mode_outlined),
+                title: const Text('حالت روشن'),
+                onTap: () {
+                  ref.read(themeModeProvider.notifier).setMode(ThemeMode.light);
+                  Navigator.pop(sheetContext);
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.dark_mode_outlined),
+                title: const Text('حالت تیره'),
+                onTap: () {
+                  ref.read(themeModeProvider.notifier).setMode(ThemeMode.dark);
+                  Navigator.pop(sheetContext);
+                },
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final profile = ref.watch(profileProvider);
     final clothingCount = ref.watch(closetProvider).length;
     final eventCount = ref.watch(calendarProvider).length;
+    final themeMode = ref.watch(themeModeProvider);
     final primary = Theme.of(context).colorScheme.primary;
     return Scaffold(
       appBar: AppBar(title: const Text('پروفایل من')),
@@ -54,7 +90,12 @@ class SettingsScreen extends ConsumerWidget {
           const SizedBox(height: 10),
           _SettingTile(icon: Icons.person_outline, title: 'اطلاعات شخصی', subtitle: 'نام، جنسیت و سبک مورد علاقه', onTap: () => context.push('/profile/setup')),
           _SettingTile(icon: Icons.notifications_none_rounded, title: 'اعلان‌ها', subtitle: 'یادآوری رویدادها و پیشنهادها', onTap: () {}),
-          _SettingTile(icon: Icons.palette_outlined, title: 'ظاهر برنامه', subtitle: 'تم روشن و رنگ اصلی', onTap: () {}),
+          _SettingTile(
+            icon: Icons.palette_outlined,
+            title: 'ظاهر برنامه',
+            subtitle: themeMode == ThemeMode.dark ? 'حالت تیره' : 'حالت روشن',
+            onTap: () => _showThemePicker(context, ref),
+          ),
           const SizedBox(height: 18),
           Card(
             child: ListTile(
