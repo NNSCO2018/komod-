@@ -13,6 +13,8 @@ class ClosetScreen extends ConsumerStatefulWidget {
 
 class _ClosetScreenState extends ConsumerState<ClosetScreen> {
   String _selectedFilter = 'همه';
+  String _query = '';
+  bool _searching = false;
 
   static const _demoItems = [
     ('کت کرم', 'کت', Icons.checkroom_outlined, Color(0xFFF0DFCC)),
@@ -36,6 +38,12 @@ class _ClosetScreenState extends ConsumerState<ClosetScreen> {
       default:
         return true;
     }
+  }
+
+  bool _matchesQuery(String name, String color) {
+    final query = _query.trim().toLowerCase();
+    if (query.isEmpty) return true;
+    return name.toLowerCase().contains(query) || color.toLowerCase().contains(query);
   }
 
   Future<void> _confirmDelete(ClothingItem item) async {
@@ -63,18 +71,38 @@ class _ClosetScreenState extends ConsumerState<ClosetScreen> {
   Widget build(BuildContext context) {
     final items = ref.watch(closetProvider);
     final primary = Theme.of(context).colorScheme.primary;
-    final visibleItems = items.where((item) => _matchesFilter(item.category)).toList();
-    final visibleDemoItems = _demoItems.where((item) => _matchesFilter(item.$2)).toList();
+    final visibleItems = items.where((item) => _matchesFilter(item.category) && _matchesQuery(item.name, item.color)).toList();
+    final visibleDemoItems = _demoItems.where((item) => _matchesFilter(item.$2) && _matchesQuery(item.$1, item.$1)).toList();
     final showDemo = items.isEmpty;
     final count = showDemo ? visibleDemoItems.length : visibleItems.length;
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('کمد من'),
-        actions: [IconButton(onPressed: () {}, icon: const Icon(Icons.search_rounded))],
+        actions: [
+          IconButton(
+            onPressed: () => setState(() {
+              _searching = !_searching;
+              if (!_searching) _query = '';
+            }),
+            icon: Icon(_searching ? Icons.close_rounded : Icons.search_rounded),
+          ),
+        ],
       ),
       body: Column(
         children: [
+          if (_searching)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+              child: TextField(
+                autofocus: true,
+                onChanged: (value) => setState(() => _query = value),
+                decoration: const InputDecoration(
+                  hintText: 'جست‌وجوی نام یا رنگ لباس',
+                  prefixIcon: Icon(Icons.search_rounded),
+                ),
+              ),
+            ),
           SizedBox(
             height: 48,
             child: ListView(
