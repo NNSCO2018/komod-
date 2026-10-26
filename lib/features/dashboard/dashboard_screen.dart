@@ -2,13 +2,25 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/profile_provider.dart';
+import '../calendar/providers/calendar_provider.dart';
+import '../closet/providers/closet_provider.dart';
+import '../suggestion/saved_outfits_provider.dart';
 
 class DashboardScreen extends ConsumerWidget {
   const DashboardScreen({super.key});
 
+  String _toPersianNumber(int value) {
+    const digits = '۰۱۲۳۴۵۶۷۸۹';
+    return value.toString().split('').map((digit) => digits[int.parse(digit)]).join();
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final profile = ref.watch(profileProvider);
+    final clothingCount = ref.watch(closetProvider).length;
+    final events = ref.watch(calendarProvider);
+    final savedOutfitsCount = ref.watch(savedOutfitsProvider).length;
+    final nextEvent = events.isEmpty ? null : events.first;
     final primary = Theme.of(context).colorScheme.primary;
     return Scaffold(
       body: SafeArea(
@@ -74,7 +86,36 @@ class DashboardScreen extends ConsumerWidget {
                 Expanded(child: _ActionCard(icon: Icons.event_outlined, label: 'تقویم', color: const Color(0xFFE879A9), onTap: () => context.go('/calendar'))),
               ],
             ),
+            const SizedBox(height: 18),
+            Row(
+              children: [
+                Expanded(child: _DashboardStat(value: _toPersianNumber(clothingCount), label: 'لباس‌های من', icon: Icons.checkroom_outlined)),
+                const SizedBox(width: 12),
+                Expanded(child: _DashboardStat(value: _toPersianNumber(savedOutfitsCount), label: 'استایل ذخیره‌شده', icon: Icons.favorite_border_rounded)),
+              ],
+            ),
             const SizedBox(height: 28),
+            if (nextEvent != null) ...[
+              const Text('نزدیک‌ترین رویداد', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 18)),
+              const SizedBox(height: 12),
+              InkWell(
+                onTap: () => context.go('/calendar'),
+                borderRadius: BorderRadius.circular(18),
+                child: Container(
+                  padding: const EdgeInsets.all(14),
+                  decoration: BoxDecoration(color: primary.withValues(alpha: 0.08), borderRadius: BorderRadius.circular(18)),
+                  child: Row(
+                    children: [
+                      Icon(Icons.event_outlined, color: primary),
+                      const SizedBox(width: 12),
+                      Expanded(child: Text(nextEvent.title, style: const TextStyle(fontWeight: FontWeight.w700))),
+                      const Icon(Icons.chevron_left_rounded, color: Colors.black38),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(height: 28),
+            ],
             const Text('پیشنهاد امروز', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 18)),
             const SizedBox(height: 12),
             InkWell(
@@ -136,6 +177,36 @@ class _ActionCard extends StatelessWidget {
             Text(label, style: TextStyle(color: color, fontSize: 12, fontWeight: FontWeight.w700)),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class _DashboardStat extends StatelessWidget {
+  const _DashboardStat({required this.value, required this.label, required this.icon});
+
+  final String value;
+  final String label;
+  final IconData icon;
+
+  @override
+  Widget build(BuildContext context) {
+    final primary = Theme.of(context).colorScheme.primary;
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(color: Theme.of(context).colorScheme.surface, borderRadius: BorderRadius.circular(18)),
+      child: Row(
+        children: [
+          Icon(icon, color: primary),
+          const SizedBox(width: 10),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(value, style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 18)),
+              Text(label, style: const TextStyle(fontSize: 11, color: Colors.black54)),
+            ],
+          ),
+        ],
       ),
     );
   }
